@@ -9,12 +9,6 @@ import OpenAI from 'openai';
 //   runtime: 'edge',
 // }
 
-export const config = {
-  maxDuration: 300, // 5 seconds
-};
-
-export const maxDuration = 300;
-
 const longTermKey = "tug_of_war_vote";
 
 interface IntervalVoteData {
