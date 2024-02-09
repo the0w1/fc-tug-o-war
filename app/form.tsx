@@ -35,7 +35,7 @@ export function PollCreateForm() {
 
   let pollStub = {
     votestwitter: 0,
-    votestwarpcast: 0
+    voteswarpcast: 0
   };
   let saveWithNewPoll = savePoll.bind(null, pollStub);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -131,10 +131,10 @@ export function PollCreateForm() {
   );
 }
 
-function PollOptions({poll, onChange} : {poll: Poll, onChange: (index: number) => void}) {
+function PollOptions({poll, onChange} : {poll: TwitterWarpcastPoll, onChange: (index: number) => void}) {
     return (
         <div className="mb-4 text-left">
-            {[poll.option1, poll.option2, poll.option3, poll.option4].filter(e => e !== "").map((option, index) => (
+            {/* {[poll.votestwitter, poll.voteswarpcast].filter(e => e !== "").map((option, index) => (
                 <label key={index} className="block">
                     <input
                         type="radio"
@@ -145,15 +145,15 @@ function PollOptions({poll, onChange} : {poll: Poll, onChange: (index: number) =
                     />
                     {option}
                 </label>
-            ))}
+            ))} */}
         </div>
     );
 }
 
-function PollResults({poll} : {poll: Poll}) {
+function PollResults({poll} : {poll: TwitterWarpcastPoll}) {
     return (
         <div className="mb-4">
-            <img src={`/api/image?id=${poll.id}&results=true&date=${Date.now()}`} alt='poll results'/>
+            <img src={`/api/image?id=${poll}&results=true&date=${Date.now()}`} alt='poll results'/>
         </div>
     );
 }

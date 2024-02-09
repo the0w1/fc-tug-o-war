@@ -39,8 +39,8 @@ export default async function Page() {
                     {
                         polls.map((poll) => {
                         // returns links to poll ids
-                        return (<div key={poll.id}>
-                            <a href={`/polls/${poll.id}`} className="underline">
+                        return (<div key={102}>
+                            <a href={`/polls/${poll}`} className="underline">
                                 <p className="text-md sm:text-xl mx-4">{poll.title}</p>
                             </a>
                         </div>)
