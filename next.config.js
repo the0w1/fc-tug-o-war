@@ -12,6 +12,9 @@ if (
   }/node_modules/canvas/build/Release:${process.env.LD_LIBRARY_PATH || ''}`;
 }
 const nextConfig = {
+  experimental: {
+    serverActions: true,
+  },
   /* config options here */
 }
  
