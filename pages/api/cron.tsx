@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server'
 import {kv} from "@vercel/kv";
-import {getSSLHubRpcClient} from "@farcaster/hub-nodejs";
 import { generatePollIdBasedOnInterval } from '@/app/utils';
 import { TwitterWarpcastPoll } from '@/app/types';
 import OpenAI from 'openai';
@@ -73,6 +72,7 @@ async function createDalleImage(longTermData: LongTermData) {
   console.log("THE LONG TERM SCORE")
   console.log(currentValue)
 
+  try {
   const response = await openai.images.generate({
     model: "dall-e-3",
     n: 1,
@@ -80,11 +80,15 @@ async function createDalleImage(longTermData: LongTermData) {
     quality: "hd",
     prompt: `YOU MUST USE THE EXACT PROMPT BETWEEN THE BRACKET INDICATORS, DO NOT MODIFY THE PROMPT: [[ I'm measuring the battle between the twitter bird (make it a realistic bird) and a degenerate man with a single integer between 1 - 100. The degenerate man is wearing a purple rounded purple top hat. Only display a degenerate with a tophat fighting against a twitter bird, and no other primary subjects. Do not depict the numbers in the image. An integer of 50 is midway and means the battle is a tie. 1 means the twitter bird has totally defeated the degenerate in an absolutely devastating fashion and 100 means the degenerate has annihilated the twitter bird as completely and totally as possible. When I'm speaking of defeat and victory, I want you to consider what a total, and unequivocal defeat/victory looks like, be as imaginative as possible. For example, a total defeat would show multiple generations of loser enslaved by victor, and displays of triumph and defeat in that vein. give me an image of the battle when the integer is ${currentValue}.]]`,
   });
+    const imageData = response.data[0].url; // URL to the generated image
+    console.log("L(@(@(@(>>>>")
+    console.log(imageData)
+    return imageData;
+  } catch (err) {
+    console.log(err);
+    return '';
+  }
   
-  const imageData = response.data[0].url; // URL to the generated image
-  console.log("L(@(@(@(>>>>")
-  console.log(imageData)
-  return imageData;
 }
 
 function determineIntervalWinner(data: IntervalVoteData): 'twitter' | 'warpcast' | null {
