@@ -25,7 +25,8 @@ type LongTermData = {
 
 export default async function handler(req: NextRequest, res: NextApiResponse) {
   const response = await update();
-  if (req.headers['authorization'] !== `Bearer ${process.env.CRON_SECRET}`) {
+  const authHeader = (req.headers as any)['authorization'];
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).end('Unauthorized');
   }
 
