@@ -23,8 +23,12 @@ type LongTermData = {
   lastUpdated: number; // Timestamp
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextRequest, res: NextApiResponse) {
   const response = await update();
+  if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).end('Unauthorized');
+  }
+
   return res.status(200).send('Success');
 }
 
