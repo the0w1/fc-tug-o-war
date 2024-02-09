@@ -36,8 +36,8 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
 
 async function update() {
   // Previous interval key
-  // const previousInterval = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
-  const previousInterval = generatePollIdBasedOnInterval(new Date(1707426459356))
+  const previousInterval = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
+  // const previousInterval = generatePollIdBasedOnInterval(new Date(1707426459356))
   // Retrieve the previous interval's vote data
   let poll: TwitterWarpcastPoll | null = await kv.hgetall(`poll:${previousInterval}`);
   console.log("IN CRON")
