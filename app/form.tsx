@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import {useRef, useState, useTransition} from "react";
+import {useOptimistic, useRef, useState, useTransition} from "react";
 import {redirectToPolls, savePoll, votePoll} from "./actions";
 import { v4 as uuidv4 } from "uuid";
 import {Poll, TwitterWarpcastPoll} from "./types";
@@ -18,20 +18,20 @@ type PollState = {
 
 export function PollCreateForm() {
   let formRef = useRef<HTMLFormElement>(null);
-//   let [state, mutate] = useOptimistic(
-//       { pending: false },
-//       function createReducer(state, newPoll: PollState) {
-//         if (newPoll.newPoll) {
-//           return {
-//             pending: newPoll.pending,
-//           };
-//         } else {
-//           return {
-//             pending: newPoll.pending,
-//           };
-//         }
-//       },
-//   );
+  let [state, mutate] = useOptimistic(
+      { pending: false },
+      function createReducer(state, newPoll: PollState) {
+        if (newPoll.newPoll) {
+          return {
+            pending: newPoll.pending,
+          };
+        } else {
+          return {
+            pending: newPoll.pending,
+          };
+        }
+      },
+  );
 
   let pollStub = {
     votestwitter: 0,
@@ -59,10 +59,10 @@ export function PollCreateForm() {
 
                 formRef.current?.reset();
                 startTransition(async () => {
-                //   mutate({
-                //     newPoll,
-                //     pending: true,
-                //   });
+                  mutate({
+                    newPoll,
+                    pending: true,
+                  });
 
                   await savePoll(newPoll, formData);
                 });
@@ -112,7 +112,7 @@ export function PollCreateForm() {
                 name="option4"
             />
               <div className={"pt-2 flex justify-end"}>
-                  {/* <button
+                  <button
                       className={clsx(
                           "flex items-center p-1 justify-center px-4 h-10 text-lg border bg-blue-500 text-white rounded-md w-24 focus:outline-none focus:ring focus:ring-blue-300 hover:bg-blue-700 focus:bg-blue-700",
                           state.pending && "bg-gray-700 cursor-not-allowed",
@@ -121,7 +121,7 @@ export function PollCreateForm() {
                       disabled={state.pending}
                   >
                       Create
-                  </button> */}
+                  </button>
               </div>
           </form>
         </div>
@@ -168,20 +168,20 @@ export function PollVoteForm({poll, viewResults}: { poll: TwitterWarpcastPoll, v
     let formRef = useRef<HTMLFormElement>(null);
     // let voteOnPoll = votePoll.bind(null, poll);
     let [isPending, startTransition] = useTransition();
-    // let [state, mutate] = useOptimistic(
-    //     { showResults: viewResults },
-    //     function createReducer({showResults}, state: PollState) {
-    //         if (state.voted || viewResults) {
-    //             return {
-    //                 showResults: true,
-    //             };
-    //         } else {
-    //             return {
-    //                 showResults: false,
-    //             };
-    //         }
-    //     },
-    // );
+    let [state, mutate] = useOptimistic(
+        { showResults: viewResults },
+        function createReducer({showResults}, state: PollState) {
+            if (state.voted || viewResults) {
+                return {
+                    showResults: true,
+                };
+            } else {
+                return {
+                    showResults: false,
+                };
+            }
+        },
+    );
 
     const handleVote = (index: number) => {
         setSelectedOption(index)
@@ -218,7 +218,7 @@ export function PollVoteForm({poll, viewResults}: { poll: TwitterWarpcastPoll, v
                     });
                 }}
             >
-                {/* {state.showResults ? <PollResults poll={poll}/> : <PollOptions poll={poll} onChange={handleVote}/>}
+                {state.showResults ? <PollResults poll={poll}/> : <PollOptions poll={poll} onChange={handleVote}/>}
                 {state.showResults ? <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         type="submit"
@@ -230,7 +230,7 @@ export function PollVoteForm({poll, viewResults}: { poll: TwitterWarpcastPoll, v
                     >
                         Vote
                     </button>
-                } */}
+                }
             </form>
         </div>
 );
