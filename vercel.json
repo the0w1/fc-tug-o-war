@@ -8,7 +8,7 @@
     }
   ],
   "functions": {
-    "app/api/**/*": {
+    "app/pages/api/**/*": {
       "maxDuration": 300
     }
   }
