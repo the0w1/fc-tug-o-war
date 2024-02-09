@@ -66,7 +66,7 @@ async function update() {
 
 async function createDalleImage(longTermData: LongTermData) {
   const openai = new OpenAI({
-    apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   let currentValue: number = 50 - (longTermData.twitter - longTermData.warpcast);
