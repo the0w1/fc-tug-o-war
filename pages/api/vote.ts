@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import {Poll} from "@/app/types";
 import {kv} from "@vercel/kv";
 import {getSSLHubRpcClient, Message} from "@farcaster/hub-nodejs";
+import { generatePollIdBasedOnInterval } from '@/app/utils';
 
 const HUB_URL = process.env['HUB_URL'] || "nemes.farcaster.xyz:2283"
 const client = getSSLHubRpcClient(HUB_URL);
@@ -11,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Process the vote
         // For example, let's assume you receive an option in the body
         try {
-            const pollId = req.query['id']
+            const pollId = generatePollIdBasedOnInterval();
             const results = req.query['results'] === 'true'
             let voted = req.query['voted'] === 'true'
             if (!pollId) {
@@ -52,9 +53,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const voteExists = await kv.sismember(`poll:${pollId}:voted`, fid)
             voted = voted || !!voteExists
 
+            // Buttons are 1-indexed
             if (fid > 0 && buttonId > 0 && buttonId < 5 && !results && !voted) {
+                const votedFor = buttonId == 1 ? 'twitter' : 'warpcast';
                 let multi = kv.multi();
-                multi.hincrby(`poll:${pollId}`, `votes${buttonId}`, 1);
+                multi.hincrby(`poll:${pollId}`, `votes${votedFor}`, 1);
                 multi.sadd(`poll:${pollId}:voted`, fid);
                 await multi.exec();
             }
@@ -64,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!poll) {
                 return res.status(400).send('Missing poll ID');
             }
-            const imageUrl = `${process.env['HOST']}/api/image?id=${poll.id}&results=${results ? 'false': 'true'}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
+            const imageUrl = `${process.env['HOST']}/api/image?id=${pollId}&results=${results ? 'false': 'true'}&date=${Date.now()}${ fid > 0 ? `&fid=${fid}` : '' }`;
             let button1Text = "View Results";
             if (!voted && !results) {
                 button1Text = "Back"
@@ -85,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <meta property="og:image" content="${imageUrl}">
           <meta name="fc:frame" content="vNext">
           <meta name="fc:frame:image" content="${imageUrl}">
-          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/vote?id=${poll.id}&voted=true&results=${results ? 'false' : 'true'}">
+          <meta name="fc:frame:post_url" content="${process.env['HOST']}/api/vote?id=${pollId}&voted=true&results=${results ? 'false' : 'true'}">
           <meta name="fc:frame:button:1" content="${button1Text}">
           <meta name="fc:frame:button:2" content="Create your poll">
           <meta name="fc:frame:button:2:action" content="post_redirect">

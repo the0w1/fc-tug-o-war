@@ -2,10 +2,10 @@
 
 import { kv } from "@vercel/kv";
 import { revalidatePath } from "next/cache";
-import {Poll} from "./types";
+import {Poll, TwitterWarpcastPoll} from "./types";
 import {redirect} from "next/navigation";
 
-export async function savePoll(poll: Poll, formData: FormData) {
+export async function savePoll(poll: TwitterWarpcastPoll, formData: FormData) {
   let newPoll = {
     ...poll,
     created_at: Date.now(),
@@ -25,7 +25,8 @@ export async function savePoll(poll: Poll, formData: FormData) {
   redirect(`/polls/${poll.id}`);
 }
 
-export async function votePoll(poll: Poll, optionIndex: number) {
+// This isn't used was a previous iteration of the voting functionality
+export async function votePoll(poll: TwitterWarpcastPoll, optionIndex: number) {
   await kv.hincrby(`poll:${poll.id}`, `votes${optionIndex}`, 1);
 
   revalidatePath(`/polls/${poll.id}`);

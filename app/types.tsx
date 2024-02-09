@@ -12,4 +12,9 @@ export type Poll = {
   created_at: number;
 };
 
+export type TwitterWarpcastPoll = {
+ votestwitter: number;
+ voteswarpcast: number;
+};
+
 

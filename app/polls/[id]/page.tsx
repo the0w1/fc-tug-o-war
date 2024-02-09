@@ -1,26 +1,18 @@
 import {kv} from "@vercel/kv";
-import {Poll} from "@/app/types";
+import {Poll, TwitterWarpcastPoll} from "@/app/types";
 import {PollVoteForm} from "@/app/form";
 import Head from "next/head";
 import {Metadata, ResolvingMetadata} from "next";
+import { generatePollIdBasedOnInterval } from "@/app/utils";
 
-async function getPoll(id: string): Promise<Poll> {
+async function getPoll(id: string): Promise<TwitterWarpcastPoll> {
     let nullPoll = {
-        id: "",
-        title: "No poll found",
-        option1: "",
-        option2: "",
-        option3: "",
-        option4: "",
-        votes1: 0,
-        votes2: 0,
-        votes3: 0,
-        votes4: 0,
-        created_at: 0,
+        votestwitter: 0,
+        voteswarpcast: 0
     };
 
     try {
-        let poll: Poll | null = await kv.hgetall(`poll:${id}`);
+        let poll: TwitterWarpcastPoll | null = await kv.hgetall(`poll:${id}`);
 
         if (!poll) {
             return nullPoll;
@@ -43,7 +35,7 @@ export async function generateMetadata(
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     // read route params
-    const id = params.id
+    const id = generatePollIdBasedOnInterval()
     const poll = await getPoll(id)
 
     const fcMetadata: Record<string, string> = {
@@ -51,15 +43,15 @@ export async function generateMetadata(
         "fc:frame:post_url": `${process.env['HOST']}/api/vote?id=${id}`,
         "fc:frame:image": `${process.env['HOST']}/api/image?id=${id}`,
     };
-    [poll.option1, poll.option2, poll.option3, poll.option4].filter(o => o !== "").map((option, index) => {
+    ['Twitter', 'Warpcast'].filter(o => o !== "").map((option, index) => {
         fcMetadata[`fc:frame:button:${index + 1}`] = option;
-    })
+    });
 
 
     return {
-        title: poll.title,
+        title: 'Twitter vs. Warpcast',
         openGraph: {
-            title: poll.title,
+            title: 'Twitter vs. Warpcast',
             images: [`/api/image?id=${id}`],
         },
         other: {
@@ -81,8 +73,9 @@ function getMeta(
 }
 
 
-export default async function Page({params}: { params: {id: string}}) {
-    const poll = await getPoll(params.id);
+export default async function Page() {
+    const id = generatePollIdBasedOnInterval();
+    const poll = await getPoll(id);
 
     return(
         <>

@@ -4,12 +4,13 @@ import clsx from "clsx";
 import {useOptimistic, useRef, useState, useTransition} from "react";
 import {redirectToPolls, savePoll, votePoll} from "./actions";
 import { v4 as uuidv4 } from "uuid";
-import {Poll} from "./types";
+import {Poll, TwitterWarpcastPoll} from "./types";
 import {useRouter, useSearchParams} from "next/navigation";
+import { generatePollIdBasedOnInterval } from "./utils";
 
 type PollState = {
-  newPoll: Poll;
-  updatedPoll?: Poll;
+  newPoll: TwitterWarpcastPoll;
+  updatedPoll?: TwitterWarpcastPoll;
   pending: boolean;
   voted?: boolean;
 };
@@ -33,17 +34,8 @@ export function PollCreateForm() {
   );
 
   let pollStub = {
-    id: uuidv4(),
-    created_at: new Date().getTime(),
-    title: "",
-    option1: "",
-    option2: "",
-    option3: "",
-    option4: "",
-    votes1: 0,
-    votes2: 0,
-    votes3: 0,
-    votes4: 0,
+    votestwitter: 0,
+    votestwarpcast: 0
   };
   let saveWithNewPoll = savePoll.bind(null, pollStub);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,15 +53,8 @@ export function PollCreateForm() {
                 let formData = new FormData(event.currentTarget);
                 let newPoll = {
                   ...pollStub,
-                  title: formData.get("title") as string,
-                  option1: formData.get("option1") as string,
-                  option2: formData.get("option2") as string,
-                  option3: formData.get("option3") as string,
-                  option4: formData.get("option4") as string,
-                  votes1: 0,
-                  votes2: 0,
-                  votes3: 0,
-                  votes4: 0,
+                  votesTwitter: 0,
+                  votesWarpcast: 0,
                 };
 
                 formRef.current?.reset();
@@ -173,13 +158,15 @@ function PollResults({poll} : {poll: Poll}) {
     );
 }
 
-export function PollVoteForm({poll, viewResults}: { poll: Poll, viewResults?: boolean }) {
+// This isn't used (vestigial)
+export function PollVoteForm({poll, viewResults}: { poll: TwitterWarpcastPoll, viewResults?: boolean }) {
+    const id = generatePollIdBasedOnInterval();
     const [selectedOption, setSelectedOption] = useState(-1);
     const router = useRouter();
     const searchParams = useSearchParams();
     viewResults = true;     // Only allow voting via the api
     let formRef = useRef<HTMLFormElement>(null);
-    let voteOnPoll = votePoll.bind(null, poll);
+    // let voteOnPoll = votePoll.bind(null, poll);
     let [isPending, startTransition] = useTransition();
     let [state, mutate] = useOptimistic(
         { showResults: viewResults },
@@ -202,11 +189,11 @@ export function PollVoteForm({poll, viewResults}: { poll: Poll, viewResults?: bo
 
     return (
         <div className="max-w-sm rounded overflow-hidden shadow-lg p-4 m-4">
-            <div className="font-bold text-xl mb-2">{poll.title}</div>
+            <div className="font-bold text-xl mb-2">{id}</div>
             <form
                 className="relative my-8"
                 ref={formRef}
-                action={ () => voteOnPoll(selectedOption)}
+                // action={ () => voteOnPoll(selectedOption)}
                 onSubmit={(event) => {
                     event.preventDefault();
                     let formData = new FormData(event.currentTarget);
