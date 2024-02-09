@@ -8,6 +8,9 @@ import OpenAI from 'openai';
 // export const config = {
 //   runtime: 'edge',
 // }
+
+export const maxDuration = 300;
+
 const longTermKey = "tug_of_war_vote";
 
 interface IntervalVoteData {
@@ -73,13 +76,13 @@ async function createDalleImage(longTermData: LongTermData) {
   console.log(currentValue)
 
   try {
-  const response = await openai.images.generate({
-    model: "dall-e-3",
-    n: 1,
-    size: "1792x1024",
-    quality: "hd",
-    prompt: `YOU MUST USE THE EXACT PROMPT BETWEEN THE BRACKET INDICATORS, DO NOT MODIFY THE PROMPT: [[ I'm measuring the battle between the twitter bird (make it a realistic bird) and a degenerate man with a single integer between 1 - 100. The degenerate man is wearing a purple rounded purple top hat. Only display a degenerate with a tophat fighting against a twitter bird, and no other primary subjects. Do not depict the numbers in the image. An integer of 50 is midway and means the battle is a tie. 1 means the twitter bird has totally defeated the degenerate in an absolutely devastating fashion and 100 means the degenerate has annihilated the twitter bird as completely and totally as possible. When I'm speaking of defeat and victory, I want you to consider what a total, and unequivocal defeat/victory looks like, be as imaginative as possible. For example, a total defeat would show multiple generations of loser enslaved by victor, and displays of triumph and defeat in that vein. give me an image of the battle when the integer is ${currentValue}.]]`,
-  });
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      n: 1,
+      size: "1792x1024",
+      quality: "hd",
+      prompt: `YOU MUST USE THE EXACT PROMPT BETWEEN THE BRACKET INDICATORS, DO NOT MODIFY THE PROMPT: [[ I'm measuring the battle between the twitter bird (make it a realistic bird) and a degenerate man with a single integer between 1 - 100. The degenerate man is wearing a purple rounded purple top hat. Only display a degenerate with a tophat fighting against a twitter bird, and no other primary subjects. Do not depict the numbers in the image. An integer of 50 is midway and means the battle is a tie. 1 means the twitter bird has totally defeated the degenerate in an absolutely devastating fashion and 100 means the degenerate has annihilated the twitter bird as completely and totally as possible. When I'm speaking of defeat and victory, I want you to consider what a total, and unequivocal defeat/victory looks like, be as imaginative as possible. For example, a total defeat would show multiple generations of loser enslaved by victor, and displays of triumph and defeat in that vein. give me an image of the battle when the integer is ${currentValue}.]]`,
+    });
     const imageData = response.data[0].url; // URL to the generated image
     console.log("L(@(@(@(>>>>")
     console.log(imageData)
