@@ -6,5 +6,10 @@
       "path": "/api/cron",
       "schedule": "*/10 * * * *"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/**/*": {
+      "maxDuration": 300
+    }
+  }
 }
