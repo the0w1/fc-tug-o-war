@@ -88,10 +88,10 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
     
     pollData.options.forEach((opt: { percentOfTotal: number; text: string; }, index: number) => {
         ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-        const optionX = 30;
-        const optionY = 80 + index * 60;
-        const optionWidth = 250;
-        const optionHeight = 37;
+        const optionX = 20;
+        const optionY = 90 + index * 60;
+        const optionWidth = 300;
+        const optionHeight = 45;
 
         ctx.shadowOffsetX = shadowOffset;
         ctx.shadowOffsetY = shadowOffset;
@@ -120,7 +120,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
                 }
                 // Option text
                 ctx.fillStyle = '#FFF';
-                ctx.font = '18px Roboto';
+                ctx.font = '20px Roboto';
                 ctx.fillText(opt.text, optionX + 10, optionY + 10);
             }
         }
