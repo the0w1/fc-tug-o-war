@@ -4,7 +4,6 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "vercel-build": "yum install gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib-devel"
   },
   "dependencies": {
     "@farcaster/hub-nodejs": "^0.10.21",
