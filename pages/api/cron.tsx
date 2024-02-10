@@ -50,10 +50,8 @@ async function update() {
       // Determine the winner based on vote counts
       const winner = determineIntervalWinner(previousData);
       // If there's a clear winner, update the long-term store
-      if (winner) {
-        // image generated here
-        await updateLongTermStore(winner);
-      }
+      // image generated here
+      await updateLongTermStore(winner);
     }
   } else {
     console.log("Missing poll id")
@@ -102,12 +100,14 @@ function determineIntervalWinner(data: IntervalVoteData): 'twitter' | 'warpcast'
   return null; // It's a tie or no votes
 }
 
-async function updateLongTermStore(winner: 'twitter' | 'warpcast') {
+async function updateLongTermStore(winner: 'twitter' | 'warpcast' | null) {
   let rawData = await kv.get(longTermKey) || '';
   // @ts-ignore
   let longTermData: LongTermData = rawData ? rawData : { twitter: 0, warpcast: 0, lastUpdated: Date.now() };
   
-  longTermData[winner] += 1;
+  if (winner) {
+    longTermData[winner] += 1;
+  }
   longTermData.lastUpdated = Date.now();
 
   const url = await createDalleImage(longTermData)
