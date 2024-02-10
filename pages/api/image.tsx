@@ -30,9 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const pollOptions = ['twitter', 'warpcast']
         
         // @ts-ignore
-        poll['votestwitter'] = 2 || poll['votestwitter'] || '0';
+        poll['votestwitter'] = poll['votestwitter'] || '0';
         // @ts-ignore
-        poll['voteswarpcast'] = 1 || poll['voteswarpcast'] || '0';
+        poll['voteswarpcast'] = poll['voteswarpcast'] || '0';
         
         const totalVotes = pollOptions
             // @ts-ignore
@@ -110,7 +110,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
 
                 // Draw the poll ID, options, etc., as before
                 ctx.fillStyle = "white";
-                ctx.fillText("Latest 10 min Vote Results", 20, 20); // Adjust positioning as needed
+                ctx.fillText("Latest 10 min Vote Results", 20, 40); // Adjust positioning as needed
 
                 // Background bar for the option
                 ctx.fillStyle = gradient; // Use gradient for a modern look
@@ -169,7 +169,7 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
     const barWidth = width * 0.8;
     const barHeight = 30;
     const barX = (width - barWidth) / 2;
-    const barY = height - 60; // Position the bar towards the bottom of the canvas
+    const barY = height - 80; // Position the bar towards the bottom of the canvas
 
     // Draw the background bar
     ctx.fillStyle = 'rgba(200, 200, 200, 0.6)'; // Light grey background
