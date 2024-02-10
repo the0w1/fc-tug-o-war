@@ -6,7 +6,7 @@ import satori from "satori";
 import { join } from 'path';
 import * as fs from "fs";
 import { generatePollIdBasedOnInterval } from '@/app/utils';
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas, loadImage, registerFont } from 'canvas';
 
 const fontPath = join(process.cwd(), 'Roboto-Regular.ttf')
 let fontData = fs.readFileSync(fontPath)
@@ -21,7 +21,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         let poll: TwitterWarpcastPoll | null = await kv.hgetall(`poll:${pollId}`) || await kv.hgetall(`poll:${previousIntervalPollId}`);
+        console.log("This is the poll", poll)
         let rawData = await kv.get<{twitter: number, warpcast: number, imageUrl: string}>('tug_of_war_vote');
+        console.log("This is the rawData", rawData)
 
         const showResults = req.query['results'] === 'true'
 
@@ -72,6 +74,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
     const width = 1075;
     const height = 614;
     const canvas = createCanvas(width, height);
+    registerFont(join(process.cwd(), 'lib/Roboto-Regular.ttf'), { family: 'Roboto' });
     const ctx = canvas.getContext('2d');
   
     // Load and draw the background image
