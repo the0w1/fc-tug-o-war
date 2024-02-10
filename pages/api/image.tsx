@@ -102,7 +102,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
     
         // If showing results, overlay with a percentage bar
         if (showResults) {
-            if (!!opt.percentOfTotal && opt.percentOfTotal != 0) {
+            if (!!opt.percentOfTotal && opt.percentOfTotal >= 0) {
                 // Continue with setting styles for the text
                 ctx.font = '30px Roboto';
                 ctx.textAlign = 'left';
