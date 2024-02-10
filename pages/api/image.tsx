@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const twitterScore = rawData?.twitter || 0;
         const warpcastScore = rawData?.warpcast || 0;
-        const cumulativeScore = 50 - twitterScore - warpcastScore;
+        const cumulativeScore = 50 - (twitterScore - warpcastScore);
         const pngBuffer = await createPollImageWithBackground(rawData?.imageUrl, pollId, pollData, showResults, cumulativeScore)
 
         // // Convert SVG to PNG using Sharp
