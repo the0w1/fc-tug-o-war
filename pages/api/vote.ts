@@ -46,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Clicked create poll
             if ((results || voted) && buttonId === 2) {
-                return res.status(302).setHeader('Location', `${process.env['HOST']}`).send('Redirecting to create poll');
+                return res.status(302).setHeader('Location', `https://fc-polls.vercel.app/`).send('Redirecting to create poll');
             }
 
 
