@@ -14,7 +14,7 @@
     "@types/uuid": "9.0.7",
     "@vercel/kv": "^1.0.1",
     "autoprefixer": "10.4.16",
-    "canvas": "https://registry.yarnpkg.com/@favware/skip-dependency/-/skip-dependency-1.2.1.tgz",
+    "canvas": "^2.11.2",
     "clsx": "^2.1.0",
     "geist": "^1.2.1",
     "next": "^14.1.0",
