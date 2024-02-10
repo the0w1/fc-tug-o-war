@@ -176,8 +176,13 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
     drawRoundedRect(ctx, barX, barY, barWidth, barHeight, 10); // 10 is the borderRadius
     ctx.fill();
 
+    console.log("CUMU")
+    console.log(cumulativeScore)
+    console.log(barX)
+    console.log(barWidth)
+
     // Calculate the position of the cumulative score marker
-    const scorePosition = barX + (cumulativeScore / 50) * barWidth;
+    const scorePosition = barX + (cumulativeScore / 100) * barWidth;
 
     // Draw the cumulative score marker
     ctx.fillStyle = 'rgba(255, 99, 71, 0.8)'; // A strong color for visibility
