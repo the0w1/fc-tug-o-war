@@ -169,7 +169,7 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
     const barWidth = width * 0.8;
     const barHeight = 30;
     const barX = (width - barWidth) / 2;
-    const barY = height - 80; // Position the bar towards the bottom of the canvas
+    const barY = height - 110; // Position the bar towards the bottom of the canvas
 
     // Draw the background bar
     ctx.fillStyle = 'rgba(200, 200, 200, 0.6)'; // Light grey background
