@@ -21,9 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         let poll: TwitterWarpcastPoll | null = await kv.hgetall(`poll:${pollId}`) || await kv.hgetall(`poll:${previousIntervalPollId}`);
-        console.log("This is the poll", poll)
         let rawData = await kv.get<{twitter: number, warpcast: number, imageUrl: string}>('tug_of_war_vote');
-        console.log("This is the rawData", rawData)
 
         const showResults = req.query['results'] === 'true'
 
@@ -87,7 +85,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
     const gradient = ctx.createLinearGradient(0, 0, width, 0);
     gradient.addColorStop(0, 'rgba(106,17,203, 0.5)');
     gradient.addColorStop(1, 'rgba(37,117,252, 0.5)');
-  
+    
     pollData.options.forEach((opt: { percentOfTotal: number; text: string; }, index: number) => {
         ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
         const optionX = 30;
@@ -102,7 +100,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
     
         // If showing results, overlay with a percentage bar
         if (showResults) {
-            if (!!opt.percentOfTotal && opt.percentOfTotal >= 0) {
+            if (opt.percentOfTotal !== null && opt.percentOfTotal >= 0) {
                 // Continue with setting styles for the text
                 ctx.font = '30px Roboto';
                 ctx.textAlign = 'left';
@@ -117,7 +115,9 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
                 drawRoundedRect(ctx, optionX, optionY, optionWidth, optionHeight, borderRadius);
                 ctx.fill();
                 
-                drawPercentageBar(ctx, optionX, optionY, optionWidth, optionHeight, opt.percentOfTotal, borderRadius);
+                if (!!opt.percentOfTotal) {
+                    drawPercentageBar(ctx, optionX, optionY, optionWidth, optionHeight, opt.percentOfTotal, borderRadius);
+                }
                 // Option text
                 ctx.fillStyle = '#FFF';
                 ctx.font = '18px Roboto';
@@ -176,11 +176,6 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
     drawRoundedRect(ctx, barX, barY, barWidth, barHeight, 10); // 10 is the borderRadius
     ctx.fill();
 
-    console.log("CUMU")
-    console.log(cumulativeScore)
-    console.log(barX)
-    console.log(barWidth)
-
     // Calculate the position of the cumulative score marker
     const scorePosition = barX + (cumulativeScore / 100) * barWidth;
 
@@ -190,36 +185,40 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
     ctx.arc(scorePosition, barY + barHeight / 2, 10, 0, 2 * Math.PI);
     ctx.fill();
 
+      // Calculate midpoint position
+      const midpointX = barX + barWidth / 2;
+      const midpointY = barY + barHeight / 2;
+  
+      // Draw midpoint delineation (vertical line)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // White for contrast
+      ctx.fillRect(midpointX, barY, 2, barHeight); // 2px wide line
+  
+      // Draw "50" indicator below the line
+      drawTextWithModernBackground(ctx, "50", midpointX, barY + barHeight + 20); // Position the "50" indicator below the bar  
+
     // Optional: Add text or icons for Twitter and Warpcast at the ends of the bar
     ctx.fillStyle = '#000'; // Black text
-    drawTextWithShadow(ctx, 'Twitter', barX, barY - 20);
-    drawTextWithShadow(ctx, 'Warpcast', barX + barWidth, barY - 20);
-
-    // Display the cumulative score above the marker
-    ctx.fillStyle = '#fff'; // White text for contrast
-    ctx.fillText(`Score: ${cumulativeScore}`, scorePosition, barY - 20);
+    drawTextWithModernBackground(ctx, 'Twitter', barX, barY - 20);
+    drawTextWithModernBackground(ctx, 'Warpcast', barX + barWidth, barY - 20);
+    drawTextWithModernBackground(ctx, `Score: ${cumulativeScore}`, scorePosition, barY - 60); // Adjust positioning as needed
 }
 
 //@ts-ignore
-function drawTextWithShadow(ctx, text, x, y) {
-    // Configure shadow
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)'; // Shadow color
-    ctx.shadowBlur = 4; // Blur level
-    ctx.shadowOffsetX = 2; // Horizontal offset
-    ctx.shadowOffsetY = 2; // Vertical offset
+function drawTextWithModernBackground(ctx, text, x, y, padding = 10) {
+    ctx.font = '30px Roboto'; // Adjust font size as needed
+    const metrics = ctx.measureText(text);
+    const textWidth = metrics.width;
+    const backgroundWidth = textWidth + padding * 2;
+    const backgroundHeight = 40; // Adjust height as needed
+    const backgroundX = x - backgroundWidth / 2;
+    const backgroundY = y - backgroundHeight / 4;
 
-    // Set text properties
-    ctx.font = '30px Roboto';
-    ctx.fillStyle = '#FFF'; // Text color for contrast
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    // Draw background rectangle with rounded corners for a modern look
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; // Semi-transparent white
+    drawRoundedRect(ctx, backgroundX, backgroundY, backgroundWidth, backgroundHeight, 20); // 20 is the borderRadius
+    ctx.fill();
 
-    // Draw the text with shadow
-    ctx.fillText(text, x, y);
-
-    // Reset shadow properties to avoid affecting other canvas elements
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
+    // Draw the text over the background
+    ctx.fillStyle = '#000'; // Black text for contrast
+    ctx.fillText(text, x, y + 10); // Adjust vertical position as needed
 }
