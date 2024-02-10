@@ -192,8 +192,8 @@ function drawTheCumulativeScore(ctx, width, height, cumulativeScore) {
 
     // Optional: Add text or icons for Twitter and Warpcast at the ends of the bar
     ctx.fillStyle = '#000'; // Black text
-    drawTextWithShadow(ctx, 'Warpcast', barX, barY - 20);
-    drawTextWithShadow(ctx, 'Twitter', barX + barWidth, barY - 20);
+    drawTextWithShadow(ctx, 'Twitter', barX, barY - 20);
+    drawTextWithShadow(ctx, 'Warpcast', barX + barWidth, barY - 20);
 
     // Display the cumulative score above the marker
     ctx.fillStyle = '#fff'; // White text for contrast
