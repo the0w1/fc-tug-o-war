@@ -73,12 +73,57 @@ async function createDalleImage(longTermData: LongTermData) {
   console.log(currentValue)
 
   try {
+    // const completion = await openai.chat.completions.create({
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content: 
+    //       `You are a helpful assistant that is designed to output detailed prompts that will be highly optimized to work with the Dall-e-3 text to image generation api from OpenAI. 
+    //       You will output only the prompt, do not include anything else in the output except for the prompt that can be fed into dall e 3. Comply with the following rules:
+
+    //       * The state of the battle (who is winnning or losing) is ${currentValue} where numbers closer to 1 means the smug man has experienced total loss, and numbers closer to 100 means the twitter bird has experienced total loss
+    //       * Do not include or mention the battle score in the output prompt, only use it to determine how to describe who is winning the battle and by what margin the battle is decided. 
+    //       * Only include two primary subjects in the output prompt: the twitter bird and the likeable/smug man. 
+    //       * The style should be a blend of digital art with elements of realism and fantasy. It should feature a realistic portrayal of a bird with dramatic lighting and dynamic composition, common in digital painting. The rendering of light, shadow, and texture gives depth and a lifelike quality to the characters.
+    //       * Do not include any numbers or scores in the output prompt`,
+    //     },
+    //     { role: "user", content: `Describe a tableau vivant of a battle that correlates to this number: ${currentValue}, where a number of 50 is midway and means the battle is a tie, and 1 equals the twitter bird has total victory over the degenerate in an absolutely devastating fashion and 100 equals the smug man has annihilated the twitter bird as completely and totally as possible. An extreme and vivid portrayal of a battle between a realistic twitter bird and a smug and likeable man wearing a purple rounded purple top hat. Other acceptable descriptions for total, and unequivocal defeat/victory are: showing multiple generations of loser enslaved by victor, and physical altercations between the two fighters. Be as imaginative in the prompt as possible` },
+    //   ],
+    //   model: "gpt-3.5-turbo",
+    // });
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: 
+          `You are a helpful assistant that takes a number and outputs a prompt that describes either the twitter bird winning or a smug man wearing a purple top hat winning a physical large scale war. 
+            * The smaller the number, the more victorious the twitter bird appears, 
+            * the larger the number the more victorious the smug man appears.
+          You will output only the prompt, do not include anything else in the output except for the prompt that can be fed into dall e 3. Comply with the following rules:
+
+          * Only include two primary subjects in the output prompt: the twitter bird and the likeable/smug man wearing a purple top hat
+          * The style should be a blend of digital art with elements of realism and fantasy
+          `,
+        },
+        { role: "user", content: "1"},
+        { role: "assistant", content: `A tableau vivant where a realistic twitter bird has total victory over the smug man wearing a purple top hat in an absolutely devastating fashion. The twitter bird is has total victory, and the smug man is sprawled across the ground with weapons broken and getting clawed by the twitter bird. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'twitter bird's' unchallenged supremacy and the complete annihilation of the smug man.` },
+        { role: "user",  content: "80"},
+        { role: "assistant", content: `A blend of realism and digital art, high quality art, where a smug man depicted wearing a purple top hat is victorious over a twitter bird. The bird is injured and running away while the man is clearly confident and has an abvious upperhand in their war/battle. The twitter bird looks distressed and weary`},
+        { role: "user",  content: "45"},
+        { role: "assistant", content: `depict a vivid battle scene where the realistic Twitter bird holds a slight advantage over the 'smug man'. The 'smug man', identifiable by his purple rounded top hat, is shown resilient but slightly overpowered in this challenging confrontation. Style is a blend of digital art with elements of realism and fantasy`},
+        { role: "user", content: "100"},
+        { role: "assistant", content: `A tableau vivant of a smug man wearing a purple top hat annihilating a realistic twitter bird as completely and totally as possible. the twitter bird is enslaved by the smug man and looks utterly and totally defeated and crippled. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'smug man's' unchallenged supremacy and the complete annihilation of the Twitter bird.` },
+        { role: "user", content: `${currentValue}`}
+      ],
+      model: "gpt-4",
+    });
+    console.log(completion.choices[0].message.content);
     const response = await openai.images.generate({
       model: "dall-e-3",
       n: 1,
       size: "1792x1024",
       quality: "hd",
-      prompt: `YOU MUST USE THE EXACT PROMPT BETWEEN THE BRACKET INDICATORS, DO NOT MODIFY THE PROMPT: [[ Generate an extreme & imaginative vivid portrayal of a battle between the realistic twitter bird and a degenerate 'degen' man. The degenerate man is wearing a purple rounded purple top hat. Do not display any other primary subjects besides the degenerate man with a tophat and the twitter bird. The battle status is determined by a single integer between 1 to 100. Do not depict the numbers in the image. A score of 50 is midway and means the battle is a tie. 1 means the twitter bird has totally defeated the degenerate in an absolutely devastating fashion and 100 means the degenerate has annihilated the twitter bird as completely and totally as possible. When I'm speaking of defeat and victory, I want you to consider what a total, and unequivocal defeat/victory looks like, be as imaginative as possible. For example, a total defeat would show multiple generations of loser enslaved by victor, and displays of triumph and defeat in that vein. give me an image of the battle when the integer is ${currentValue}.]]`,
+      prompt: `YOU MUST USE THE EXACT PROMPT BETWEEN THE BRACKET INDICATORS, DO NOT MODIFY THE PROMPT: [[ ${completion.choices[0].message.content} The style should be a blend of digital art with elements of realism and fantasy. Dynamic contrast and great lighting composition.]]`,
     });
     const imageData = response.data[0].url; // URL to the generated image
     console.log("L(@(@(@(>>>>")
