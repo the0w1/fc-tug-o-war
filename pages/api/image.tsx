@@ -14,7 +14,8 @@ let fontData = fs.readFileSync(fontPath)
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const pollId = generatePollIdBasedOnInterval()
-        const previousIntervalPollId = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
+        // const previousIntervalPollId = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
+        const previousIntervalPollId = generatePollIdBasedOnInterval(new Date(Date.now() - 60 * 60000));
         // const fid = parseInt(req.query['fid']?.toString() || '')
         if (!pollId) {
             return res.status(400).send('Missing poll ID');
@@ -108,7 +109,7 @@ async function createPollImageWithBackground(backgroundUrl: string | Buffer = 'h
 
                 // Draw the poll ID, options, etc., as before
                 ctx.fillStyle = "white";
-                ctx.fillText("Latest 10 min Vote Results", 20, 40); // Adjust positioning as needed
+                ctx.fillText("Latest 1 Hour Vote Results", 20, 40); // Adjust positioning as needed
 
                 // Background bar for the option
                 ctx.fillStyle = gradient; // Use gradient for a modern look

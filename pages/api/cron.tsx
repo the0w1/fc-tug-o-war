@@ -35,7 +35,8 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
 
 async function update() {
   // Previous interval key
-  const previousInterval = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
+  // const previousInterval = generatePollIdBasedOnInterval(new Date(Date.now() - 10 * 60000));
+  const previousInterval = generatePollIdBasedOnInterval(new Date(Date.now() - 60 * 60000));
   // const previousInterval = generatePollIdBasedOnInterval(new Date(1707426459356))
   // Retrieve the previous interval's vote data
   let poll: TwitterWarpcastPoll | null = await kv.hgetall(`poll:${previousInterval}`);
@@ -106,13 +107,13 @@ async function createDalleImage(longTermData: LongTermData) {
           `,
         },
         { role: "user", content: "1"},
-        { role: "assistant", content: `A tableau vivant where a realistic twitter bird has total victory over the smug man wearing a purple top hat in an absolutely devastating fashion. The twitter bird is has total victory, and the smug man is sprawled across the ground with weapons broken and getting clawed by the twitter bird. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'twitter bird's' unchallenged supremacy and the complete annihilation of the smug man.` },
+        { role: "assistant", content: `a realistic twitter bird has total victory over the smug man wearing a purple top hat in an absolutely devastating fashion. The twitter bird has total victory and stands over the smug man, who is sprawled across the ground with weapons broken and getting clawed by the twitter bird. The twitter bird has a regal air about him and is surrounded by flags and displays of triumph. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'twitter bird's' unchallenged supremacy and the complete annihilation of the smug man.` },
         { role: "user",  content: "80"},
-        { role: "assistant", content: `A blend of realism and digital art, high quality art, where a smug man depicted wearing a purple top hat is victorious over a twitter bird. The bird is injured and running away while the man is clearly confident and has an abvious upperhand in their war/battle. The twitter bird looks distressed and weary`},
+        { role: "assistant", content: `The bird is injured and running away while the man is clearly confident and has an abvious upperhand in their war/battle. The twitter bird looks distressed and weary. A blend of realism and digital art, high quality art, where a smug man depicted wearing a purple top hat is victorious over a twitter bird. The bird's feathers are bent and dirtied, and it tries to beg the smug man for mercy`},
         { role: "user",  content: "45"},
-        { role: "assistant", content: `depict a vivid battle scene where the realistic Twitter bird holds a slight advantage over the 'smug man'. The 'smug man', identifiable by his purple rounded top hat, is shown resilient but slightly overpowered in this challenging confrontation. Style is a blend of digital art with elements of realism and fantasy`},
+        { role: "assistant", content: `a vivid battle scene where the realistic Twitter bird holds a slight advantage over the 'smug man'. The 'smug man' is slightly off balance, while trying to defend against the more favorably positioned twitter bird. The twitter bird looks strong, while the smug man appears to be caught off guard. The 'smug man', identifiable by his purple rounded top hat, is shown resilient but slightly overpowered in this challenging confrontation. Style is a blend of digital art with elements of realism and fantasy`},
         { role: "user", content: "100"},
-        { role: "assistant", content: `A tableau vivant of a smug man wearing a purple top hat annihilating a realistic twitter bird as completely and totally as possible. the twitter bird is enslaved by the smug man and looks utterly and totally defeated and crippled. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'smug man's' unchallenged supremacy and the complete annihilation of the Twitter bird.` },
+        { role: "assistant", content: `a smug man wearing a purple top hat annihilating a realistic twitter bird as completely and totally as possible. the smug man is standing over the twitter bird's corpse and the twitter bird is enslaved by chains held by the smug man. The twitter bird looks utterly and totally defeated and crippled. Style is a blend of digital art with elements of realism and fantasy. This victory is symbolized by dramatic and victorious imagery, illustrating the 'smug man's' unchallenged supremacy and the complete annihilation of the Twitter bird.` },
         { role: "user", content: `${currentValue}`}
       ],
       model: "gpt-4",
